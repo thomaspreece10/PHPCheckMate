@@ -180,8 +180,7 @@
 	$new_ml =  new MoveList($p1, $p2);
 	list($p1_moves, $p2_moves) = $movelist->get_all_moves();
 	for ($i = 0; $i < count($p1_moves); $i++) {
-	    $p1_move = $p1_moves[$i];
-	    $p2_move = $p2_moves[$i];
+		$p1_move = $p1_moves[$i];
 	    $piece = $old_to_new[spl_object_hash($p1_move->get_piece())];
 	    $sq1 = $p1_move->get_start_square();
 	    $sq2 = $p1_move->get_dest_square();
@@ -191,17 +190,19 @@
 	    if ($p1_move->is_long_castle()) $flags |= self::__MOVE_CASTLE_LONG__ ;
 	    if ($p1_move->is_en_passant()) $flags |= self::__MOVE_EN_PASSANT__ ;
 	    $new_ml->add_move($piece, $sq1, $sq2, $flags);
-	    if($p2_move) {
-			$p2_piece = $old_to_new[spl_object_hash($p2_move->get_piece())];
-			$p2_sq1 = $p2_move->get_start_square();
-			$p2_sq2 = $p2_move->get_dest_square();
-			$p2_flags = 0x0;
-			if ($p2_move->is_capture()) $p2_flags |= self::__MOVE_CAPTURE__ ;
-			if ($p2_move->is_short_castle()) $p2_flags |= self::__MOVE_CASTLE_SHORT__ ;
-			if ($p2_move->is_long_castle()) $p2_flags |= self::__MOVE_CASTLE_LONG__ ;
-			if ($p2_move->is_en_passant()) $p2_flags |= self::__MOVE_EN_PASSANT__ ;
-			$new_ml->add_move($p2_piece, $p2_sq1, $p2_sq2, $p2_flags);
-	    }
+	}
+	
+	for ($i = 0; $i < count($p2_moves); $i++) {
+		$p2_move = $p2_moves[$i];
+		$p2_piece = $old_to_new[spl_object_hash($p2_move->get_piece())];
+		$p2_sq1 = $p2_move->get_start_square();
+		$p2_sq2 = $p2_move->get_dest_square();
+		$p2_flags = 0x0;
+		if ($p2_move->is_capture()) $p2_flags |= self::__MOVE_CAPTURE__ ;
+		if ($p2_move->is_short_castle()) $p2_flags |= self::__MOVE_CASTLE_SHORT__ ;
+		if ($p2_move->is_long_castle()) $p2_flags |= self::__MOVE_CASTLE_LONG__ ;
+		if ($p2_move->is_en_passant()) $p2_flags |= self::__MOVE_EN_PASSANT__ ;
+		$new_ml->add_move($p2_piece, $p2_sq1, $p2_sq2, $p2_flags);
 	}
 
 	$new_obj->movelist = $new_ml;
@@ -633,7 +634,7 @@
 	    else {
 	    	#Check "en passant" capture
 			if($piece instanceof Pawn) {
-			    $ml = $piece->movelist;
+			    $ml = $this->movelist;
 			    if(Board::horz_distance($sq1, $sq2) != 0 &&
 			            $this->_is_valid_en_passant($piece, $sq1, $sq2) == false) {
 					$this->message = "Pawns must capture on a diagonal move";
